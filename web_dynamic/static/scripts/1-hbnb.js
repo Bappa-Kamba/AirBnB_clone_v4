@@ -1,40 +1,30 @@
 // Wait for the document to be ready
 $(document).ready(function() {
-    // Find <input> tage
-    const input = $('INPUT');
+    // Set to store checked amenities
+    const checkedAmenities = new Set();
 
-    // Check if the <input> is found
-    if (input.length > 0){
-        // Check if checkbox is checked
-        input.click(function() {
-            if ($(this).is(':checked')) {
-                // If checked, add data-id to a list
-                $('UL.popover > li > input').each(function() {
-                    $(this).prop('checked', true);
-                    const id = $(this).attr('data-id');
-                    if (id) {
-                        const idList = $('DIV.amenities > h4');
-                        if (idList.length > 0) {
-                            idList.append(' ' + id);
-                        } else {
-                            $('DIV.amenities').append('<h4></h4>').append(id);
-                        }
-                    }
-                });
-            } else {
-                // If unchecked, remove data-id from a list
-                $('UL.popover > li > input').each(function() {
-                    $(this).prop('checked', false);
-                    const id = $(this).attr('data-id');
-                    if (id) {
-                        const idList = $('DIV.amenities > h4');
-                        if (idList.length > 0) {
-                            idList.remove(id);
-                        }
-                    }
-                });
-            }
-        });
+    // Listen for changes on each input checkbox tag
+    $('input[type="checkbox"]').change(function() {
+        const name = $(this).attr('data-name'); // Assuming data-name is used for Amenity name
+
+        if ($(this).is(':checked')) {
+            // If checkbox is checked, add Amenity name to the set
+            checkedAmenities.add(name);
+        } else {
+            // If checkbox is unchecked, remove Amenity name from the set
+            checkedAmenities.delete(name);
+        }
+
+        // Update the h4 tag inside the div Amenities with the list of Amenities checked
+        updateAmenities();
+    });
+
+    // Function to update the h4 tag with the list of Amenities checked
+    function updateAmenities() {
+        const amenityList = Array.from(checkedAmenities).join(', ');
+
+        // Update the h4 tag
+        $('DIV.amenities > h4').text(amenityList);
     }
-
 });
+
